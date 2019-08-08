@@ -59,5 +59,11 @@ namespace WebStore.Controllers
             ViewData["Title"] = "Вход";
             return View();
         }
+
+        //public IActionResult Shop()
+        //{
+        //    ViewData["Title"] = "Вход";
+        //    return View();
+        //}
     }
 }

@@ -5,9 +5,9 @@ using WebStore.ViewModels;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace WebStore.CustomerController
+namespace WebStore.EmployeeController
 {
-    public class CustomerController : Controller
+    public class EmployeeController : Controller
     {
         private readonly List<EmployeeView> _employeeViews = new List<EmployeeView>
         {

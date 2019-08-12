@@ -1,43 +1,80 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using System.Collections.Generic;
 using System.Linq;
+using WebStore.Infrastructure.Interfaces;
+
 using WebStore.ViewModels;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace WebStore.EmployeeController
 {
+    [Route("Users")]
     public class EmployeeController : Controller
     {
-        private readonly List<EmployeeView> _employeeViews = new List<EmployeeView>
+        public IEmployeesData _employees { get; }
+
+        public EmployeeController(IEmployeesData employees)
         {
-            new EmployeeView
-            {
-                Id=1,
-                FirstName = "Иван",
-                SurName = "Иванов",
-                Patronymic = "Иванович",
-                Age = 22
-            },
-                        new EmployeeView
-            {
-                Id=2,
-                FirstName = "Владислав",
-                SurName = "Петров",
-                Patronymic = "Иванович",
-                Age = 35
-            }
-        };
+            _employees = employees;
+        }
 
         // GET: /<controller>/
+        [Route("All")]
         public IActionResult Index()
         {
-            return View(_employeeViews);
+            return View(_employees.GetAll());
+        }
+        [Route("{id}")]
+        public IActionResult Details(int id)
+        {
+            var employee = _employees.GetById(id);
+
+            if (employee == null)
+                return NotFound();
+
+            return View(employee);
+        }
+        //GET
+        [HttpGet]
+        [Route("edit/{id?}")]
+        public IActionResult Edit (int? id)
+        {
+            if (!id.HasValue)
+            {
+                return View(new EmployeeView());
+            }
+
+            EmployeeView model = _employees.GetById(id.Value);
+            if(model == null)
+            {
+                return NotFound();
+            }
+            return View(model);
         }
 
-        public IActionResult Details(int Id)
+        [HttpPost]
+        [Route("edit/{id?}")]
+        public IActionResult Edit(EmployeeView model)
         {
-            return View(_employeeViews.FirstOrDefault(x => x.Id == Id));
+            if (model.Id > 0)
+            {
+                var dbItem = _employees.GetById(model.Id);
+                if (dbItem == null) return NotFound();
+                dbItem.FirstName = model.FirstName;
+                dbItem.SurName = model.SurName;
+                dbItem.Age = model.Age;
+                dbItem.Patronymic = model.Patronymic;
+             }
+            else
+            {
+                _employees.AddNew(model);
+            }
+            _employees.Commit();
+            return RedirectToAction(nameof(Index));
+            
         }
+
     }
 }

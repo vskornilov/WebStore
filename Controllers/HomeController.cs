@@ -8,11 +8,11 @@ namespace WebStore.Controllers
         {
             return View();
         }
-        public IActionResult NotFound()
-        {
-            ViewData["Title"] = "404";
-            return View();
-        }
+        //public IActionResult NotFound()
+        //{
+        //    ViewData["Title"] = "404";
+        //    return View();
+        //}
         public IActionResult Blog()
         {
             ViewData["Title"] = "Блог";
